@@ -2,10 +2,10 @@ camunda:
   client:
     mode: saas
     auth:
-      client-id: 3yx76oeP7Me6j9wJMkqyQYrrHKCsiiF9
-      client-secret: PLW7lCGtJNHWzD0Ms4QT-yQh_IXoBpxIZnFSq1xMVgA9rb7AFOS1zk6Nj0lalDB~
+      client-id:
+      client-secret:
     cloud:
-      cluster-id: 493871eb-c719-4acf-a16e-9cce93d2ece3
+      cluster-id:
       region: lhr-1
   task-list-url: https://${camunda.client.cloud.region}.tasklist.camunda.io/${camunda.client.cloud.cluster-id}/
   zeebe-rest-address: https://${camunda.client.cloud.region}.zeebe.camunda.io/${camunda.client.cloud.cluster-id}/
@@ -19,20 +19,20 @@ spring:
       client:
         registration:
           azure:
-            client-id: ac728b61-1855-4a6c-b7fa-b1b2d8bd8c6f
-            client-secret: euJ8Q~J768v4Q77U_epAh2ytMJX4fK4X66ywAchG
+            client-id:
+            client-secret:
             authorization-grant-type: authorization_code
             #            scope: .default
             scope: openid, profile, email, User.Read
             redirect-uri: http://localhost:8888/login/oauth2/code/azure
         provider:
           azure:
-            issuer-uri: https://login.microsoftonline.com/fc617c24-f3a3-45ef-9211-2c88d6a060e8/v2.0
-            authorization-uri: https://login.microsoftonline.com/fc617c24-f3a3-45ef-9211-2c88d6a060e8/oauth2/v2.0/authorize
-            token-uri: https://login.microsoftonline.com/fc617c24-f3a3-45ef-9211-2c88d6a060e8/oauth2/v2.0/token
+            issuer-uri:
+            authorization-uri: https://login.microsoftonline.com/${tenant-Id}/oauth2/v2.0/authorize
+            token-uri: https://login.microsoftonline.com/${tenant-id}/oauth2/v2.0/token
             user-name-attribute: name
 
-#redirect-uri: http://localhost:8888/login/oauth2/code/azure
+  #redirect-uri: http://localhost:8888/login/oauth2/code/azure
 
 
   datasource:
