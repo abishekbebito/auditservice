@@ -24,7 +24,7 @@ public class MjutDtoService {
                                     task.getProcessInstanceKey()
                             );
                     if(mjutId!=null){
-                        return new MJUTDisplayDTO(mjutId.getMjutId(), task.getFormKey(), task.getAssignee());
+                        return new MJUTDisplayDTO(mjutId.getMjutId(), task.getId(), task.getAssignee());
                     }else{
                         return null;
                     }

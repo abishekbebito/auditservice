@@ -1,5 +1,4 @@
 package com.camunda.auditTrail.controller;
-import com.camunda.auditTrail.dto.MJUTDisplayDTO;
 import com.camunda.auditTrail.entity.ProcessInstanceEntity;
 import com.camunda.auditTrail.entity.TasklistEntity;
 import com.camunda.auditTrail.repository.TasklistRepo;
@@ -124,18 +123,19 @@ public class TaskController {
 
         Thread.sleep(5000);//processInstance created but task gets late to appear for that this sleep need to configure in future
 
-        String formId =auditTrialService
+        String id =auditTrialService
                 .fetchTasks(searchTaskRequestBody)
                 .stream()
                 .findFirst()
                 .orElseThrow(()-> new RuntimeException("No task found for the given search criteria!"))
-                .getId();//gets the formId
+                .getId();//gets the formKey
 
-        tasklistEntity.setFormId(formId);
+        tasklistEntity.setFormId(id);
+        System.out.println(tasklistEntity);
         tasklistRepo.save(tasklistEntity);
 
 
-        return "redirect:"+camundaTasklistUrl+ formId;
+        return "redirect:"+camundaTasklistUrl+ id;
     }
 
 

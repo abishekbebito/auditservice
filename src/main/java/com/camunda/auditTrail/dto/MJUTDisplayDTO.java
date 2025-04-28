@@ -7,6 +7,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class MJUTDisplayDTO {
     private String mjutId;
-    private String formKey;
+    private String formId;
     private String assignee;
 }

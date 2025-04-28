@@ -2,117 +2,105 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title th:text="${user}">Title</title>
+  <title th:text="${user}">Task List</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet"
-        href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" />
-  <script
-          src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script
-          src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
-  <script
-          src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+
+  <!-- Bootstrap and jQuery -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+
   <style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 30px;
-    }
-
-    h2 {
-        color: #2c3e50;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-
-    thead {
-        background-color: #f2f2f2;
-    }
-
-    th, td {
-        padding: 12px;
-        text-align: left;
-        border: 1px solid #ddd;
-    }
-
-    tr:hover {
-        background-color: #f9f9f9;
-    }
-
-    th {
-        color: #333;
-    }
-
-    td {
-        color: #555;
-    }
+    body { font-family: Arial, sans-serif; margin: 30px; }
+    h2 { color: #2c3e50; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    thead { background-color: #f2f2f2; }
+    th, td { padding: 12px; text-align: left; border: 1px solid #ddd; }
+    tr:hover { background-color: #f9f9f9; }
+    th { color: #333; }
+    td { color: #555; }
   </style>
 </head>
+
 <body>
+
+<!-- New Request Button -->
 <form th:action="@{/createRequest}" th:method="post">
-  <button formtarget="_blank">New Request</button>
+  <button formtarget="_blank" class="btn btn-primary mb-3">New Request</button>
 </form>
 
 <hr>
+
+<!-- Title -->
 <h2>Task List</h2>
-<label for="dueDate">Due Date:</label>
-<input type="date" id="dueDate" min="" />
-<button onclick="filterTasks()">Filter</button>
-<table id="taskList">
+
+<!-- Search Input -->
+<div class="form-inline mb-3">
+  <label for="searchInput" class="mr-2">Search by MJUT ID:</label>
+  <input type="text" id="searchInput" class="form-control mr-2" style="width: 250px;" placeholder="Enter MJUT ID" />
+  <button type="button" class="btn btn-secondary" onclick="clearSearch()">Clear</button>
+</div>
+
+<!-- Task Table -->
+<table id="taskList" class="table table-striped">
   <thead>
   <tr>
-    <th>ID</th>
+    <th>Category</th>
+    <th>mjut-ID</th>
     <th>Assignee</th>
-    <th>State</th>
   </tr>
   </thead>
-  <tbody>
+  <tbody id="taskListBody">
   <tr th:each="task : ${tasks}">
+    <td>Journal Update</td>
     <td>
-      <a th:href="@{${tasklistUrl} + ${task.formKey}}" th:text="${task.mjutId != null ? task.mjutId : 'N/A'}">Mjut-Id</a>
+      <a th:href="@{${tasklistUrl} + ${task.formId}}"
+         th:text="${task.mjutId != null ? task.mjutId : 'N/A'}">Mjut-Id</a>
     </td>
     <td th:text="${#strings.isEmpty(task.assignee) ? 'N/A' : task.assignee}">Assignee</td>
-<!--    <td th:text="${#strings.isEmpty(task.state) ? 'N/A' : task.state}">State</td>-->
   </tr>
   </tbody>
 </table>
 
+<!-- No Results Message -->
+<div id="noResults" style="display:none; color:red; margin-top:10px; font-weight:bold;">
+  No matching MJUT ID found!
+</div>
+
+<!-- jQuery Script -->
 <script>
-  const today = new Date().toISOString().split("T")[0];
-  document.getElementById("dueDate").setAttribute("min", today);
+  $(document).ready(function() {
+    // Search functionality
+    $("#searchInput").on("keyup", function() {
+      var input = $(this).val().toUpperCase();
+      var visibleRowCount = 0;
 
-  function createTasks(){
-      fetch('/createRequest?'+'
-  }
-  function filterTasks(){
-
-      const dueDate = document.getElementById("dueDate").value;
-
-      const params = new URLSearchParams({
-
-          dueDate: dueDate
+      $("#taskList tbody tr").each(function() {
+        var linkText = $(this).find("td:first-child a").text().toUpperCase();
+        if (linkText.indexOf(input) > -1) {
+          $(this).show();
+          visibleRowCount++;
+        } else {
+          $(this).hide();
+        }
       });
 
-      fetch('/filterRequest?'+params.toString())
-      .then(
-          response=>{
-              if(!response.ok){
-                  throw new Error('Network response was not OK');
-              }
-              return response.json();
-          }
-      )
-      .then(data=>{
-          document.getElementById('taskList').innerHTML=data;
-      })
-      .catch(error=>{
-          console.error('There was a problem with the fetch operation:',error);
-          document.getElementById('taskList').innerHTML='Error loading content.';
-      });
-  }
+      if (visibleRowCount === 0) {
+        $("#noResults").show();
+      } else {
+        $("#noResults").hide();
+      }
+    });
+
+    // Clear Search button functionality
+    $("#clearSearch").click(function() {
+      $("#searchInput").val(''); // Clear the input box
+      $("#taskList tbody tr").show(); // Show all rows
+      $("#noResults").hide(); // Hide no results message
+    });
+  });
 </script>
+
 </body>
 </html>
